@@ -4935,13 +4935,19 @@ runcode(function()
 		if killauratarget["Enabled"] then
 			table.insert(attackedplayers, plr)
 		end
-		if killaurahitdelay > tick() then 
+		if killaurahitdelay >= tick() then 
 			return nil
+		end
+		if oldcloneroot then 
+			if (oldcloneroot.Position - root.Position).Magnitude >= 18 then 
+				return nil
+			end
 		end
 		local sword = (equipped.Object and (equipped.Object.Name == "frying_pan" or equipped.Object.Name == "baguette") and {tool = equipped.Object} or getSword())
 		local selfrootpos = (oldcloneroot or entity.character.HumanoidRootPart).Position
 		local selfpos = selfrootpos + (killaurarange["Value"] > 14 and (selfrootpos - root.Position).magnitude > 14 and (CFrame.lookAt(selfrootpos, root.Position).lookVector * 4) or Vector3.zero)
 		if sword and sword["tool"] then
+			killaurahitdelay = tick() + bedwars["ItemTable"][sword["tool"].Name].sword.attackSpeed + 0.1
 			local attacksuccess = killaurarealremote:InvokeServer({
 				["weapon"] = sword["tool"],
 				["chargedAttack"] = {chargeRatio = 1},
@@ -4955,9 +4961,6 @@ runcode(function()
 					["selfPosition"] = hashvec(selfpos)
 				}
 			})
-			if attacksuccess then 
-				killaurahitdelay = tick() + bedwars["ItemTable"][sword["tool"].Name].sword.attackSpeed
-			end
 		end
 	end
 
@@ -5212,13 +5215,13 @@ runcode(function()
         ["Function"] = function(val) end,
         ["Default"] = 360
     })
-    killauratargets = Killaura.CreateSlider({
+  --[[  killauratargets = Killaura.CreateSlider({
         ["Name"] = "Max targets",
         ["Min"] = 1,
         ["Max"] = 10,
         ["Function"] = function(val) end,
         ["Default"] = 10
-    })
+    })]]
     killauraanimmethod = Killaura.CreateDropdown({
         ["Name"] = "Animation", 
         ["List"] = {"Normal", "Slow", "Vertical Spin", "Exhibition", "Exhibition Old"},
